@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  phone         String?
+  role          Role      @default(AGENT)
+  agencyName    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  clients  Client[]
+  accounts Account[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String?
+  phone       String
+  city        String?
+  idNumber    String?  // CNI / Passport
+  agentId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  agent    User     @relation(fields: [agentId], references: [id])
+  policies Policy[]
+
+  @@map("clients")
+}
+
+model Policy {
+  id          String       @id @default(cuid())
+  number      String       @unique
+  type        PolicyType
+  status      PolicyStatus @default(ACTIVE)
+  premium     Float
+  startDate   DateTime
+  endDate     DateTime
+  clientId    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  client Client @relation(fields: [clientId], references: [id])
+
+  @@map("policies")
+}
+
+enum Role {
+  ADMIN
+  AGENT
+}
+
+enum PolicyType {
+  AUTO
+  LIFE
+  HEALTH
+  PROPERTY
+  TRAVEL
+}
+
+enum PolicyStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+}
