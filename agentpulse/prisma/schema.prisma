@@ -8,24 +8,59 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  emailVerified DateTime?
-  password      String?
-  phone         String?
-  role          Role      @default(AGENT)
-  agencyName    String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+// ─── Société ──────────────────────────────────────────────────────────────────
 
-  clients  Client[]
+model Company {
+  id             String   @id @default(cuid())
+  name           String
+  logoUrl        String?
+  primaryColor   String   @default("#3B82F6")
+  secondaryColor String   @default("#10B981")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  users       User[]
+  prospects   Prospect[]
+  policies    Policy[]
+  commissions Commission[]
+
+  @@map("companies")
+}
+
+// ─── Utilisateur ──────────────────────────────────────────────────────────────
+
+model User {
+  id             String     @id @default(cuid())
+  email          String     @unique
+  name           String
+  phone          String?
+  passwordHash   String
+  role           Role       @default(AGENT)
+  status         UserStatus @default(TRIAL)
+  trialExpiresAt DateTime?
+  commissionRate Float      @default(5.0)
+  companyId      String
+  supervisorId   String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  company    Company @relation(fields: [companyId], references: [id])
+  supervisor User?   @relation("SupervisorAgents", fields: [supervisorId], references: [id])
+  agents     User[]  @relation("SupervisorAgents")
+
+  prospects           Prospect[]
+  policies            Policy[]
+  commissions         Commission[]
+  approvedCommissions Commission[] @relation("ApprovedCommissions")
+  activities          Activity[]
+
   accounts Account[]
   sessions Session[]
 
   @@map("users")
 }
+
+// ─── NextAuth ─────────────────────────────────────────────────────────────────
 
 model Account {
   id                String  @id @default(cuid())
@@ -67,57 +102,160 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-model Client {
-  id          String   @id @default(cuid())
-  firstName   String
-  lastName    String
-  email       String?
-  phone       String
-  city        String?
-  idNumber    String?  // CNI / Passport
-  agentId     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// ─── Prospect ─────────────────────────────────────────────────────────────────
 
-  agent    User     @relation(fields: [agentId], references: [id])
-  policies Policy[]
+model Prospect {
+  id             String        @id @default(cuid())
+  firstName      String
+  lastName       String
+  phone          String
+  email          String?
+  job            String?
+  estimatedPrime Float?
+  stage          ProspectStage @default(CONTACT)
+  notes          String?
+  agentId        String
+  companyId      String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
-  @@map("clients")
+  agent      User       @relation(fields: [agentId], references: [id])
+  company    Company    @relation(fields: [companyId], references: [id])
+  policies   Policy[]
+  activities Activity[]
+
+  @@map("prospects")
 }
 
-model Policy {
-  id          String       @id @default(cuid())
-  number      String       @unique
-  type        PolicyType
-  status      PolicyStatus @default(ACTIVE)
-  premium     Float
-  startDate   DateTime
-  endDate     DateTime
-  clientId    String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+// ─── Police ───────────────────────────────────────────────────────────────────
 
-  client Client @relation(fields: [clientId], references: [id])
+model Policy {
+  id           String       @id @default(cuid())
+  policyNumber String       @unique
+  productType  String
+  premium      Float
+  startDate    DateTime
+  endDate      DateTime
+  status       PolicyStatus @default(SOUMISE)
+  prospectId   String
+  agentId      String
+  companyId    String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  prospect    Prospect     @relation(fields: [prospectId], references: [id])
+  agent       User         @relation(fields: [agentId], references: [id])
+  company     Company      @relation(fields: [companyId], references: [id])
+  commissions Commission[]
+  claims      Claim[]
 
   @@map("policies")
 }
 
+// ─── Commission ───────────────────────────────────────────────────────────────
+
+model Commission {
+  id         String           @id @default(cuid())
+  amount     Float
+  rate       Float
+  month      DateTime
+  status     CommissionStatus @default(ATTENTE)
+  agentId    String
+  policyId   String
+  approvedBy String?
+  companyId  String
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  agent    User    @relation(fields: [agentId], references: [id])
+  policy   Policy  @relation(fields: [policyId], references: [id])
+  approver User?   @relation("ApprovedCommissions", fields: [approvedBy], references: [id])
+  company  Company @relation(fields: [companyId], references: [id])
+
+  @@map("commissions")
+}
+
+// ─── Sinistre ─────────────────────────────────────────────────────────────────
+
+model Claim {
+  id          String      @id @default(cuid())
+  claimNumber String      @unique
+  description String
+  amount      Float?
+  status      ClaimStatus @default(OUVERT)
+  policyId    String
+  declaredAt  DateTime    @default(now())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  policy Policy @relation(fields: [policyId], references: [id])
+
+  @@map("claims")
+}
+
+// ─── Activité ─────────────────────────────────────────────────────────────────
+
+model Activity {
+  id         String       @id @default(cuid())
+  type       ActivityType
+  note       String?
+  prospectId String?
+  userId     String
+  createdAt  DateTime     @default(now())
+
+  prospect Prospect? @relation(fields: [prospectId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
+
+  @@map("activities")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
 enum Role {
-  ADMIN
+  SUPERADMIN
+  MANAGER
+  SUPERVISOR
   AGENT
 }
 
-enum PolicyType {
-  AUTO
-  LIFE
-  HEALTH
-  PROPERTY
-  TRAVEL
+enum UserStatus {
+  TRIAL
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+}
+
+enum ProspectStage {
+  CONTACT
+  ENTRETIEN
+  ENTREVUE
+  SOUMISE
+  EMISE
+  LIVRAISON
 }
 
 enum PolicyStatus {
-  ACTIVE
-  EXPIRED
-  CANCELLED
-  PENDING
+  SOUMISE
+  EMISE
+  LIVREE
+}
+
+enum CommissionStatus {
+  ATTENTE
+  VALIDE
+  PAYE
+}
+
+enum ClaimStatus {
+  OUVERT
+  INSTRUCTION
+  CLOS
+}
+
+enum ActivityType {
+  CONTACT
+  ENTRETIEN
+  ENTREVUE
+  NOTE
+  STAGE_CHANGE
 }

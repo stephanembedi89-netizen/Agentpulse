@@ -30,9 +30,9 @@ export const authOptions: NextAuthOptions = {
           where: { email: parsed.data.email },
         })
 
-        if (!user || !user.password) return null
+        if (!user || !user.passwordHash) return null
 
-        const passwordMatch = await compare(parsed.data.password, user.password)
+        const passwordMatch = await compare(parsed.data.password, user.passwordHash)
         if (!passwordMatch) return null
 
         return {
