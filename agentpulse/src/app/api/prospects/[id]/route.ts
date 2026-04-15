@@ -22,6 +22,21 @@ export const DELETE = withRole(['AGENT', 'SUPERVISOR', 'MANAGER', 'SUPERADMIN'])
       return Response.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
+    // Un prospect avec des polices associées ne peut pas être supprimé
+    const policyCount = await prisma.policy.count({ where: { prospectId: id } })
+    if (policyCount > 0) {
+      return Response.json(
+        { error: 'Ce prospect a des polices associées et ne peut pas être supprimé' },
+        { status: 409 }
+      )
+    }
+
+    // Détacher les activités liées (prospectId est optionnel dans le schéma)
+    await prisma.activity.updateMany({
+      where: { prospectId: id },
+      data:  { prospectId: null },
+    })
+
     await prisma.prospect.delete({ where: { id } })
 
     return new Response(null, { status: 204 })
