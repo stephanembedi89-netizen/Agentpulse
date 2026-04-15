@@ -76,6 +76,7 @@ export const authOptions: NextAuthOptions = {
           role: user.role,
           companyId: user.companyId,
           status: user.status,
+          trialExpiresAt: user.trialExpiresAt?.toISOString() ?? null,
         }
       },
     }),
@@ -87,6 +88,7 @@ export const authOptions: NextAuthOptions = {
         token.role = (user as any).role
         token.companyId = (user as any).companyId
         token.status = (user as any).status
+        token.trialExpiresAt = (user as any).trialExpiresAt ?? null
       }
       return token
     },
@@ -96,6 +98,7 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role as string
         session.user.companyId = token.companyId as string
         session.user.status = token.status as string
+        session.user.trialExpiresAt = (token.trialExpiresAt as string) ?? null
       }
       return session
     },
