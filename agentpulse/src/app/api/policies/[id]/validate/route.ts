@@ -21,8 +21,8 @@ export const PUT = withRole(['SUPERVISOR', 'MANAGER', 'SUPERADMIN'])(
     const { action } = parse.data
 
     const policy = await prisma.policy.findUnique({
-      where: { id },
-      include: { agent: { select: { supervisorId: true } } },
+      where:   { id },
+      include: { agent: { select: { supervisorId: true, commissionRate: true } } },
     })
 
     if (!policy) return Response.json({ error: 'Police introuvable' }, { status: 404 })
@@ -53,6 +53,23 @@ export const PUT = withRole(['SUPERVISOR', 'MANAGER', 'SUPERADMIN'])(
       await prisma.prospect.updateMany({
         where: { id: policy.prospectId, stage: 'SOUMISE' },
         data:  { stage: 'EMISE' },
+      })
+
+      // Créer la commission automatiquement
+      const rate   = policy.agent.commissionRate
+      const amount = policy.premium * (rate / 100)
+      const month  = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+
+      await prisma.commission.create({
+        data: {
+          amount,
+          rate,
+          month,
+          status:    'ATTENTE',
+          agentId:   policy.agentId,
+          policyId:  id,
+          companyId: policy.companyId,
+        },
       })
 
       await prisma.activity.create({
