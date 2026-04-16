@@ -63,7 +63,7 @@ const NAV: Record<string, NavGroup[]> = {
       { label: 'Accueil',       href: '/manager',                icon: I.home   },
       { label: 'Classement',   href: '/manager/classement',     icon: I.trophy },
       { label: 'Superviseurs', href: '/manager/superviseurs',   icon: I.users  },
-      { label: 'KPI équipe',   href: '/manager/kpi',            icon: I.chart  },
+      { label: 'KPI équipe',   href: '/manager/kpis',           icon: I.chart  },
       { label: 'Commissions',  href: '/manager/commissions',    icon: I.coin   },
       { label: 'Alertes',      href: '/manager/alertes',        icon: I.bell   },
     ]},
