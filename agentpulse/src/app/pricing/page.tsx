@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = { title: 'Tarifs — AgentPulse' }
 
 const FEATURES = [
-  // [label, starter, pro, enterprise]
+  // [label, starter, pro, expert]
   ['Agents inclus',                  'Jusqu\'à 3',  'Jusqu\'à 15',   'Illimité'],
   ['Pipeline CRM',                   true,           true,            true],
   ['Tableau de bord agent',          true,           true,            true],
@@ -13,50 +13,54 @@ const FEATURES = [
   ['Superviseurs & validation',      false,          true,            true],
   ['Module Commissions',             false,          true,            true],
   ['Module Sinistres',               false,          true,            true],
-  ['Alertes & KPIs équipe',          false,          true,            true],
+  ['Alertes & KPIs équipe',         false,          true,            true],
   ['Classement & ratios',            false,          true,            true],
   ['Espace Manager',                 false,          true,            true],
   ['Journal d\'activité',            false,          true,            true],
+  ['Formation & onboarding inclus',  false,          false,           true],
+  ['Accompagnement VIP dédié',       false,          false,           true],
   ['Intégrations sur mesure',        false,          false,           true],
-  ['Formation & onboarding dédié',   false,          false,           true],
-  ['Manager de compte dédié',        false,          false,           true],
   ['SLA & contrat personnalisé',     false,          false,           true],
-  ['Support',                        'Email',        'Prioritaire',   'Dédié 24/7'],
+  ['Setup offert',                   true,           true,            true],
+  ['Support',                        'Email',        'Prioritaire',   'VIP 24/7'],
 ] as const
 
 const PLANS = [
   {
     name:       'Starter',
-    desc:       'Idéal pour démarrer',
+    desc:       'Idéal pour tester. On vous offre le setup.',
     price:      49_000,
     promo:      null,
     badge:      null,
+    promoLabel: null,
     cta:        'Commencer l\'essai',
     ctaHref:    '/register',
     highlight:  false,
-    enterprise: false,
+    expert:     false,
   },
   {
     name:       'Pro',
-    desc:       'Pour les équipes en croissance',
+    desc:       'Le prix spécial pour nos 10 premières agences.',
     price:      149_000,
     promo:      99_000,
-    badge:      'Offre de lancement — 1ère année',
+    badge:      'Offre Lundi — 6 premiers mois',
+    promoLabel: 'pendant 6 mois, puis 149 000 FCFA/mois',
     cta:        'Démarrer en Pro',
     ctaHref:    '/register',
     highlight:  true,
-    enterprise: false,
+    expert:     false,
   },
   {
-    name:       'Enterprise',
-    desc:       'Sur mesure pour les grandes sociétés',
+    name:       'Expert',
+    desc:       'Accompagnement VIP + Formation incluse.',
     price:      null,
-    promo:      249_000,
-    badge:      'Prix d\'accès — sur devis ensuite',
-    cta:        'Nous contacter',
+    promo:      null,
+    badge:      null,
+    promoLabel: null,
+    cta:        'Demander un devis',
     ctaHref:    'mailto:contact@agentpulse.cm',
     highlight:  false,
-    enterprise: true,
+    expert:     true,
   },
 ] as const
 
@@ -139,15 +143,10 @@ export default function PricingPage() {
               </div>
 
               {/* Pricing display */}
-              {plan.enterprise ? (
-                <div className="mb-2">
-                  {plan.promo && (
-                    <div className="mb-1">
-                      <span className="text-3xl font-black text-white">{fmt(plan.promo)}</span>
-                      <span className="text-white/30 text-sm">/mois</span>
-                    </div>
-                  )}
-                  <p className="text-xs text-white/30 italic">puis sur devis selon votre équipe</p>
+              {'expert' in plan && plan.expert ? (
+                <div className="mb-4">
+                  <span className="text-3xl font-black text-white">Sur devis</span>
+                  <p className="text-xs text-white/30 mt-1 italic">Tarif personnalisé selon la taille de votre équipe</p>
                 </div>
               ) : plan.promo ? (
                 <div className="mb-2">
@@ -155,12 +154,15 @@ export default function PricingPage() {
                     <span className="text-3xl font-black text-white">{fmt(plan.promo)}</span>
                     <span className="text-white/30 text-sm">/mois</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mb-1">
                     <span className="text-white/30 text-sm line-through">{fmt(plan.price!)}</span>
                     <span className="text-emerald-400 text-xs font-bold">
                       -{Math.round(((plan.price! - plan.promo) / plan.price!) * 100)}%
                     </span>
                   </div>
+                  {'promoLabel' in plan && plan.promoLabel && (
+                    <p className="text-[11px] text-white/25 italic">{plan.promoLabel}</p>
+                  )}
                 </div>
               ) : (
                 <div className="mb-2">
@@ -238,7 +240,7 @@ export default function PricingPage() {
                   <td className="px-5 py-4 text-white font-bold">Prix mensuel</td>
                   {PLANS.map(p => (
                     <td key={p.name} className="px-4 py-4 text-center">
-                      {p.enterprise ? (
+                      {'expert' in p && p.expert ? (
                         <span className="text-xs text-amber-400 font-bold">Sur devis</span>
                       ) : p.promo ? (
                         <div>
