@@ -53,7 +53,7 @@ const NAV: Record<string, NavGroup[]> = {
     ]},
     { title: 'Mon équipe', items: [
       { label: 'Mes Agents',         href: '/supervisor/agents',      icon: I.users  },
-      { label: 'Polices à valider',  href: '/supervisor/validations', icon: I.check  },
+      { label: 'Polices à valider',  href: '/supervisor/validation', icon: I.check  },
       { label: 'Sinistres',          href: '/supervisor/sinistres',   icon: I.doc    },
       { label: 'Alertes',            href: '/supervisor/alertes',     icon: I.bell   },
     ]},
