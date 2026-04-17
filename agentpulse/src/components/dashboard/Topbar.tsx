@@ -21,17 +21,30 @@ type Props = {
   role: string
   status: string
   daysLeft: number | null
+  logoUrl?: string | null
 }
 
-export default function Topbar({ name, role, status, daysLeft }: Props) {
+export default function Topbar({ name, role, status, daysLeft, logoUrl }: Props) {
   const isTrial = status === 'TRIAL'
   const expiringSoon = isTrial && daysLeft !== null && daysLeft <= 3
 
   return (
     <header className="h-16 shrink-0 bg-[#080F1D] border-b border-white/5 flex items-center justify-between px-6">
 
-      {/* Gauche : titre de page (placeholder) */}
+      {/* Gauche : logo société (mobile uniquement — desktop affiché dans sidebar) + badge trial */}
       <div className="flex items-center gap-3">
+        {/* Logo visible uniquement sur mobile (sidebar cachée) */}
+        <div className="sm:hidden">
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logoUrl} alt="Logo" className="h-7 max-w-[100px] object-contain" />
+          ) : (
+            <span className="font-black text-sm text-white">
+              Agent<span style={{ color: 'var(--brand-primary)' }}>Pulse</span>
+            </span>
+          )}
+        </div>
+
         {isTrial && daysLeft !== null && (
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-semibold ${
             expiringSoon

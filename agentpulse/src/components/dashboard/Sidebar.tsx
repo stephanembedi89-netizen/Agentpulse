@@ -97,7 +97,7 @@ const ROLE_COLORS: Record<string, string> = {
   SUPERADMIN: 'text-orange-400',
 }
 
-export default function Sidebar({ role }: { role: string }) {
+export default function Sidebar({ role, logoUrl }: { role: string; logoUrl?: string | null }) {
   const pathname = usePathname()
   const groups = NAV[role] ?? []
 
@@ -105,16 +105,27 @@ export default function Sidebar({ role }: { role: string }) {
     return pathname === href || (href !== '/' && href !== '/agent' && href !== '/supervisor' && href !== '/manager' && href !== '/admin' && pathname.startsWith(href))
   }
 
+  const activeStyle: React.CSSProperties = {
+    color:           'var(--brand-primary)',
+    backgroundColor: 'rgba(var(--brand-primary-rgb), 0.15)',
+    borderColor:     'rgba(var(--brand-primary-rgb), 0.25)',
+  }
+
   return (
     <aside className="w-60 shrink-0 bg-[#0D1626] flex flex-col h-full border-r border-white/5">
-      {/* Logo */}
+      {/* Logo société ou AgentPulse */}
       <div className="h-16 flex items-center px-5 border-b border-white/5 shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
-            <span className="text-white text-xs font-bold">AP</span>
+        {logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logoUrl} alt="Logo" className="h-8 max-w-[140px] object-contain" />
+        ) : (
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--brand-primary)' }}>
+              <span className="text-white text-xs font-bold">AP</span>
+            </div>
+            <span className="text-white font-bold text-sm tracking-wide">AgentPulse</span>
           </div>
-          <span className="text-white font-bold text-sm tracking-wide">AgentPulse</span>
-        </div>
+        )}
       </div>
 
       {/* Rôle badge */}
@@ -140,13 +151,10 @@ export default function Sidebar({ role }: { role: string }) {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className={`
-                        flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                        ${active
-                          ? 'bg-blue-600/20 text-blue-400 border border-blue-500/20'
-                          : 'text-gray-400 hover:text-white hover:bg-white/5'
-                        }
-                      `}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                        active ? 'border-transparent' : 'border-transparent text-gray-400 hover:text-white hover:bg-white/5'
+                      }`}
+                      style={active ? activeStyle : undefined}
                     >
                       <Icon d={item.icon} />
                       {item.label}
@@ -161,7 +169,10 @@ export default function Sidebar({ role }: { role: string }) {
 
       {/* Footer sidebar */}
       <div className="px-3 py-4 border-t border-white/5 shrink-0">
-        <p className="text-center text-[10px] text-gray-600">AgentPulse © {new Date().getFullYear()}</p>
+        <p className="text-center text-[10px] text-gray-600">
+          Powered by{' '}
+          <span className="text-gray-500 font-semibold">Jengu.AI</span>
+        </p>
       </div>
     </aside>
   )
