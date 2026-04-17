@@ -24,6 +24,7 @@ model Company {
   prospects   Prospect[]
   policies    Policy[]
   commissions Commission[]
+  snapshots   AgentSnapshot[]
 
   @@map("companies")
 }
@@ -54,6 +55,7 @@ model User {
   commissions         Commission[]
   approvedCommissions Commission[] @relation("ApprovedCommissions")
   activities          Activity[]
+  snapshots           AgentSnapshot[]
 
   accounts Account[]
   sessions Session[]
@@ -208,6 +210,23 @@ model Activity {
   user     User      @relation(fields: [userId], references: [id])
 
   @@map("activities")
+}
+
+// ─── Snapshot d'activité agent (généré tous les 14 jours) ────────────────────
+
+model AgentSnapshot {
+  id          String   @id @default(cuid())
+  agentId     String
+  companyId   String
+  periodStart DateTime
+  periodEnd   DateTime
+  data        Json
+  createdAt   DateTime @default(now())
+
+  agent   User    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("agent_snapshots")
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
