@@ -72,9 +72,10 @@ const NAV: Record<string, NavGroup[]> = {
       { label: 'Alertes',      href: '/manager/alertes',        icon: I.bell   },
     ]},
     { title: 'Administration', items: [
-      { label: 'Utilisateurs', href: '/manager/utilisateurs',   icon: I.user   },
-      { label: 'Objectifs',    href: '/manager/objectifs',      icon: I.target },
-      { label: 'Journal',      href: '/manager/journal',        icon: I.book   },
+      { label: 'Utilisateurs',  href: '/manager/utilisateurs',  icon: I.user   },
+      { label: 'Assignations',  href: '/manager/assignations',  icon: I.check  },
+      { label: 'Objectifs',     href: '/manager/objectifs',     icon: I.target },
+      { label: 'Journal',       href: '/manager/journal',       icon: I.book   },
     ]},
   ],
   SUPERADMIN: [
