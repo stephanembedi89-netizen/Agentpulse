@@ -22,8 +22,15 @@ function getDashboard(role?: string): string {
 
 export default withAuth(
   function middleware(req) {
-    const role = req.nextauth.token?.role as string | undefined
+    const token    = req.nextauth.token
+    const role     = token?.role as string | undefined
+    const status   = token?.status as string | undefined
     const pathname = req.nextUrl.pathname
+
+    // Compte expiré → /expired (sauf SUPERADMIN)
+    if (status === 'EXPIRED' && role !== 'SUPERADMIN') {
+      return NextResponse.redirect(new URL('/expired', req.url))
+    }
 
     const section = Object.keys(ALLOWED).find((s) => pathname.startsWith(s))
     if (section && role && !ALLOWED[section].includes(role)) {

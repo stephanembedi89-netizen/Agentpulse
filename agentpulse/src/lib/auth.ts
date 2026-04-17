@@ -64,8 +64,8 @@ export const authOptions: NextAuthOptions = {
         if (!match) return null
 
         // Vérification du statut
-        if (user.status === 'EXPIRED') throw new Error('ACCOUNT_EXPIRED')
         if (user.status === 'SUSPENDED') throw new Error('ACCOUNT_SUSPENDED')
+        // EXPIRED : on laisse se connecter, le middleware redirige vers /expired
 
         clearRateLimit(ip)
 
