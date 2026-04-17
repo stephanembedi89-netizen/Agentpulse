@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import Link from 'next/link'
 
 export const metadata: Metadata = { title: 'Mon Équipe — AgentPulse' }
 
@@ -68,10 +69,10 @@ export default async function SupervisorAgentsPage() {
             {agentStats.map(a => (
               <tr key={a.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                 <td className="px-4 py-3">
-                  <div>
-                    <p className="font-medium text-white">{a.name}</p>
+                  <Link href={`/supervisor/agents/${a.id}`} className="group">
+                    <p className="font-medium text-white group-hover:underline">{a.name}</p>
                     <p className="text-xs text-white/30">{a.email}</p>
-                  </div>
+                  </Link>
                 </td>
                 <td className="px-4 py-3 text-blue-400 font-semibold">{a.contacts}</td>
                 <td className="px-4 py-3 text-violet-400 font-semibold">{a.entrevues}</td>

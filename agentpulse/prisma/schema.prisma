@@ -16,6 +16,7 @@ model Company {
   logoUrl        String?
   primaryColor   String   @default("#3B82F6")
   secondaryColor String   @default("#10B981")
+  objectives     Json?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
