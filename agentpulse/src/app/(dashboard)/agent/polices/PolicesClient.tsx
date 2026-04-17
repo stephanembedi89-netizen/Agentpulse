@@ -122,16 +122,20 @@ export default function PolicesClient({
 
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-white">Mes Polices</h1>
-        <button
-          onClick={() => setShowModal(true)}
-          disabled={prospects.length === 0}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Nouvelle police
-        </button>
+        <div className="flex flex-col items-end gap-1">
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Nouvelle police
+          </button>
+          {prospects.length === 0 && (
+            <p className="text-xs text-amber-400">Ajoutez d&apos;abord un prospect à votre pipeline</p>
+          )}
+        </div>
       </div>
 
       {/* Stats rapides */}
@@ -205,20 +209,26 @@ export default function PolicesClient({
 
               <div>
                 <label className="block text-xs font-medium text-white/50 mb-1.5">Client (prospect converti) *</label>
-                <select
-                  value={form.prospectId}
-                  onChange={e => setForm(f => ({ ...f, prospectId: e.target.value }))}
-                  required
-                  className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  style={{ backgroundColor: '#0D1626', color: 'white' }}
-                >
-                  <option value="" disabled style={{ backgroundColor: '#0D1626', color: '#9ca3af' }}>Sélectionner un prospect</option>
-                  {prospects.map(p => (
-                    <option key={p.id} value={p.id} style={{ backgroundColor: '#0D1626', color: 'white' }}>
-                      {p.firstName} {p.lastName} — {p.stage}
-                    </option>
-                  ))}
-                </select>
+                {prospects.length === 0 ? (
+                  <div className="w-full border border-amber-500/30 rounded-lg px-3 py-2.5 text-xs text-amber-400 bg-amber-500/10">
+                    Aucun prospect éligible. Faites avancer un prospect jusqu&apos;à l&apos;étape Entrevue ou plus pour pouvoir créer une police.
+                  </div>
+                ) : (
+                  <select
+                    value={form.prospectId}
+                    onChange={e => setForm(f => ({ ...f, prospectId: e.target.value }))}
+                    required
+                    className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    style={{ backgroundColor: '#0D1626', color: 'white' }}
+                  >
+                    <option value="" disabled style={{ backgroundColor: '#0D1626', color: '#9ca3af' }}>Sélectionner un prospect</option>
+                    {prospects.map(p => (
+                      <option key={p.id} value={p.id} style={{ backgroundColor: '#0D1626', color: 'white' }}>
+                        {p.firstName} {p.lastName} — {p.stage}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div>
@@ -280,7 +290,7 @@ export default function PolicesClient({
                 </button>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || prospects.length === 0}
                   className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
                 >
                   {saving ? 'Soumission…' : 'Soumettre'}

@@ -23,7 +23,7 @@ export default async function SupervisorPolicesPage() {
       where: {
         agentId,
         companyId,
-        stage: { in: ['SOUMISE', 'EMISE', 'LIVRAISON'] },
+        stage: { in: ['ENTREVUE', 'SOUMISE', 'EMISE', 'LIVRAISON'] },
       },
       select: { id: true, firstName: true, lastName: true, stage: true },
       orderBy: { updatedAt: 'desc' },
