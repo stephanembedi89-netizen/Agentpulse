@@ -1,12 +1,13 @@
 {
   "name": "AgentPulse",
   "short_name": "AgentPulse",
-  "description": "Gestion d'assurance pour agents au Cameroun",
-  "start_url": "/dashboard",
+  "description": "Plateforme performance agents d'assurance",
+  "start_url": "/agent",
   "display": "standalone",
-  "background_color": "#f9fafb",
-  "theme_color": "#2563eb",
   "orientation": "portrait",
+  "background_color": "#080F1D",
+  "theme_color": "#0D1626",
+  "scope": "/",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
