@@ -53,6 +53,7 @@ const NAV: Record<string, NavGroup[]> = {
       { label: 'Pipeline',      href: '/supervisor/pipeline',       icon: I.funnel },
       { label: 'Mes Polices',   href: '/supervisor/polices',        icon: I.doc    },
       { label: 'Commissions',   href: '/supervisor/commissions',    icon: I.coin   },
+      { label: 'Mes Ratios',    href: '/supervisor/ratios',         icon: I.chart  },
     ]},
     { title: 'Mon équipe', items: [
       { label: 'Mes Agents',         href: '/supervisor/agents',      icon: I.users  },
