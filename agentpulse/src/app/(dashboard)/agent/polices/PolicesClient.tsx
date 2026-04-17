@@ -3,11 +3,28 @@
 import { useState } from 'react'
 
 const PRODUCT_TYPES = [
-  'Assurance Vie',
-  'Auto',
-  'Multirisque Habitation',
-  'Santé',
-  'Voyage',
+  // Vie & Épargne
+  'Assurance Vie Individuelle',
+  'Assurance Vie Groupe',
+  'Assurance Décès & Invalidité',
+  'Épargne & Retraite',
+  'Assurance Emprunteur',
+  // Auto
+  'Assurance Auto Tous Risques',
+  'Assurance Auto Tiers Simple',
+  'Assurance Auto Tiers Étendu',
+  // Habitation & Professionnel
+  'Assurance Multirisque Habitation',
+  'Assurance Multirisque Professionnelle',
+  'Assurance Responsabilité Civile',
+  // Santé
+  'Assurance Santé Individuelle',
+  'Assurance Santé Collective',
+  // Autres
+  'Assurance Scolaire',
+  'Assurance Voyage',
+  'Assurance Agriculture / Récoltes',
+  'Assurance Transport / Marchandises',
 ] as const
 
 interface Policy {
@@ -192,11 +209,12 @@ export default function PolicesClient({
                   value={form.prospectId}
                   onChange={e => setForm(f => ({ ...f, prospectId: e.target.value }))}
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  style={{ backgroundColor: '#0D1626', color: 'white' }}
                 >
-                  <option value="" disabled>Sélectionner un prospect</option>
+                  <option value="" disabled style={{ backgroundColor: '#0D1626', color: '#9ca3af' }}>Sélectionner un prospect</option>
                   {prospects.map(p => (
-                    <option key={p.id} value={p.id}>
+                    <option key={p.id} value={p.id} style={{ backgroundColor: '#0D1626', color: 'white' }}>
                       {p.firstName} {p.lastName} — {p.stage}
                     </option>
                   ))}
@@ -209,11 +227,12 @@ export default function PolicesClient({
                   value={form.productType}
                   onChange={e => setForm(f => ({ ...f, productType: e.target.value as typeof PRODUCT_TYPES[number] }))}
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  style={{ backgroundColor: '#0D1626', color: 'white' }}
                 >
-                  <option value="" disabled>Sélectionner un produit</option>
+                  <option value="" disabled style={{ backgroundColor: '#0D1626', color: '#9ca3af' }}>Sélectionner un produit</option>
                   {PRODUCT_TYPES.map(t => (
-                    <option key={t} value={t}>{t}</option>
+                    <option key={t} value={t} style={{ backgroundColor: '#0D1626', color: 'white' }}>{t}</option>
                   ))}
                 </select>
               </div>

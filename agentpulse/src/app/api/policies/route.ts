@@ -3,11 +3,23 @@ import { prisma } from '@/lib/prisma'
 import { withRole } from '@/lib/withRole'
 
 const PRODUCT_TYPES = [
-  'Assurance Vie',
-  'Auto',
-  'Multirisque Habitation',
-  'Santé',
-  'Voyage',
+  'Assurance Vie Individuelle',
+  'Assurance Vie Groupe',
+  'Assurance Décès & Invalidité',
+  'Épargne & Retraite',
+  'Assurance Emprunteur',
+  'Assurance Auto Tous Risques',
+  'Assurance Auto Tiers Simple',
+  'Assurance Auto Tiers Étendu',
+  'Assurance Multirisque Habitation',
+  'Assurance Multirisque Professionnelle',
+  'Assurance Responsabilité Civile',
+  'Assurance Santé Individuelle',
+  'Assurance Santé Collective',
+  'Assurance Scolaire',
+  'Assurance Voyage',
+  'Assurance Agriculture / Récoltes',
+  'Assurance Transport / Marchandises',
 ] as const
 
 const createSchema = z.object({
