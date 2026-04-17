@@ -25,13 +25,18 @@ export default async function ManagerDashboardPage() {
   const now       = new Date()
   const startMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-  const [contactsMois, policesMois, commissions, primes, company] = await Promise.all([
+  const [contactsMois, policesMois, commissions, primes] = await Promise.all([
     prisma.prospect.count({ where: { companyId, createdAt: { gte: startMonth } } }),
     prisma.policy.count({ where: { companyId, status: { in: ['EMISE', 'LIVREE'] }, createdAt: { gte: startMonth } } }),
     prisma.commission.findMany({ where: { policy: { companyId }, status: 'VALIDE' }, select: { amount: true } }),
     prisma.policy.findMany({ where: { companyId, status: { in: ['EMISE', 'LIVREE'] } }, select: { premium: true } }),
-    prisma.company.findUnique({ where: { id: companyId }, select: { objectives: true } }),
   ])
+
+  // objectives column may not exist on older DB versions — degrade gracefully
+  let company: { objectives: unknown } | null = null
+  try {
+    company = await prisma.company.findUnique({ where: { id: companyId }, select: { objectives: true } })
+  } catch { /* column not yet migrated */ }
 
   const totalCommissions = commissions.reduce((s, c) => s + (c.amount ?? 0), 0)
   const totalPrimes      = primes.reduce((s, p) => s + (p.premium ?? 0), 0)
