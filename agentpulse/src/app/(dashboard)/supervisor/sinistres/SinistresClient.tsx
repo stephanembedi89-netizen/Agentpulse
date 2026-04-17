@@ -169,11 +169,12 @@ export default function SinistresClient({
                   value={form.policyId}
                   onChange={e => setForm(f => ({ ...f, policyId: e.target.value }))}
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  style={{ backgroundColor: '#0D1626', color: 'white' }}
                 >
-                  <option value="" disabled>Sélectionner une police</option>
+                  <option value="" disabled style={{ backgroundColor: '#0D1626', color: '#9ca3af' }}>Sélectionner une police</option>
                   {policies.map(p => (
-                    <option key={p.id} value={p.id}>
+                    <option key={p.id} value={p.id} style={{ backgroundColor: '#0D1626', color: 'white' }}>
                       {p.policyNumber} — {p.prospect.firstName} {p.prospect.lastName} ({p.productType})
                     </option>
                   ))}
