@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 type User = {
   id: string
@@ -29,17 +29,12 @@ const STATUS_COLORS: Record<string, string> = {
   SUSPENDED: 'text-red-400', EXPIRED: 'text-gray-400',
 }
 
-export default function UtilisateursAdminClient() {
-  const [users, setUsers]           = useState<User[]>([])
-  const [loading, setLoading]       = useState(true)
+export default function UtilisateursAdminClient({ initialUsers }: { initialUsers: User[] }) {
+  const [users, setUsers]           = useState<User[]>(initialUsers)
   const [search, setSearch]         = useState('')
   const [roleFilter, setRoleFilter] = useState('ALL')
   const [resetting, setResetting]   = useState<string | null>(null)
   const [resetResult, setResetResult] = useState<ResetResult | null>(null)
-
-  useEffect(() => {
-    fetch('/api/admin/users').then(r => r.json()).then(d => { setUsers(d); setLoading(false) })
-  }, [])
 
   async function handleReset(userId: string) {
     if (!confirm('Réinitialiser le mot de passe de cet utilisateur ?')) return
@@ -99,10 +94,7 @@ export default function UtilisateursAdminClient() {
         </select>
       </div>
 
-      {loading ? (
-        <p className="text-gray-500 text-sm">Chargement...</p>
-      ) : (
-        <div className="overflow-x-auto">
+      <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/10 text-left text-gray-400 text-xs">
@@ -154,7 +146,6 @@ export default function UtilisateursAdminClient() {
             </tbody>
           </table>
         </div>
-      )}
     </div>
   )
 }

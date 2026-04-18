@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 type Manager = { id: string; name: string; email: string; status: string; trialExpiresAt: string | null }
 type Company = {
@@ -25,22 +25,19 @@ function daysLeft(dateStr: string | null): number | null {
   return Math.ceil(diff / (1000 * 60 * 60 * 24))
 }
 
-export default function AbonnementsClient() {
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [loading, setLoading]     = useState(true)
+export default function AbonnementsClient({ initialCompanies }: { initialCompanies: Company[] }) {
+  const [companies, setCompanies] = useState<Company[]>(initialCompanies)
   const [acting, setActing]       = useState<string | null>(null)
   const [extendId, setExtendId]   = useState<string | null>(null)
   const [extendDays, setExtendDays] = useState(7)
   const [filter, setFilter]       = useState('ALL')
 
   async function load() {
-    setLoading(true)
-    const r = await fetch('/api/admin/companies')
-    setCompanies(await r.json())
-    setLoading(false)
+    try {
+      const r = await fetch('/api/admin/companies')
+      if (r.ok) setCompanies(await r.json())
+    } catch { /* ignore */ }
   }
-
-  useEffect(() => { load() }, [])
 
   async function act(companyId: string, action: string, extra?: object) {
     setActing(companyId + action)
@@ -91,9 +88,7 @@ export default function AbonnementsClient() {
         ))}
       </div>
 
-      {loading ? (
-        <p className="text-gray-500 text-sm">Chargement...</p>
-      ) : filtered.length === 0 ? (
+      {filtered.length === 0 ? (
         <p className="text-gray-500 text-sm text-center py-12">Aucune société</p>
       ) : (
         <div className="space-y-3">

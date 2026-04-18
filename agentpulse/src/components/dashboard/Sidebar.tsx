@@ -84,6 +84,7 @@ const NAV: Record<string, NavGroup[]> = {
     { title: 'Tableau de bord', items: [
       { label: 'Vue globale',       href: '/admin',                 icon: I.globe    },
       { label: 'Alertes',           href: '/admin/alertes',         icon: I.alert    },
+      { label: 'Santé système',     href: '/admin/sante',           icon: I.check    },
     ]},
     { title: 'Clients', items: [
       { label: 'Sociétés',          href: '/admin/societes',        icon: I.building },

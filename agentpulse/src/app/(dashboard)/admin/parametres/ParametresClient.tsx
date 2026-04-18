@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 type Company = {
   id: string; name: string; logoUrl: string | null
@@ -8,17 +8,12 @@ type Company = {
   users: { name: string; email: string }[]
 }
 
-export default function ParametresClient() {
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [loading, setLoading]     = useState(true)
+export default function ParametresClient({ initialCompanies }: { initialCompanies: Company[] }) {
+  const [companies, setCompanies] = useState<Company[]>(initialCompanies)
   const [editing, setEditing]     = useState<string | null>(null)
   const [saving, setSaving]       = useState(false)
   const [saved, setSaved]         = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', primaryColor: '', secondaryColor: '', logoUrl: '' })
-
-  useEffect(() => {
-    fetch('/api/admin/companies').then(r => r.json()).then(d => { setCompanies(d); setLoading(false) })
-  }, [])
 
   function startEdit(c: Company) {
     setEditing(c.id)
@@ -48,8 +43,8 @@ export default function ParametresClient() {
     if (r.ok) {
       setSaved(companyId)
       setEditing(null)
-      const updated = await fetch('/api/admin/companies').then(res => res.json())
-      setCompanies(updated)
+      const r2 = await fetch('/api/admin/companies')
+      if (r2.ok) setCompanies(await r2.json())
     }
   }
 
@@ -60,9 +55,7 @@ export default function ParametresClient() {
         <p className="text-sm text-gray-400 mt-1">Modifiez le nom, les couleurs et le logo de chaque société cliente</p>
       </div>
 
-      {loading ? (
-        <p className="text-gray-500 text-sm">Chargement...</p>
-      ) : companies.length === 0 ? (
+      {companies.length === 0 ? (
         <p className="text-gray-500 text-sm text-center py-12">Aucune société</p>
       ) : (
         <div className="space-y-4">
