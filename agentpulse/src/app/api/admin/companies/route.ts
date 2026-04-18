@@ -2,6 +2,13 @@ import { prisma } from '@/lib/prisma'
 import { withRole } from '@/lib/withRole'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
+import { randomBytes } from 'crypto'
+
+function generateSecurePassword(): string {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
+  const bytes = randomBytes(12)
+  return Array.from(bytes).map(b => chars[b % chars.length]).join('')
+}
 
 export const GET = withRole(['SUPERADMIN'])(async () => {
   const companies = await prisma.company.findMany({
@@ -38,7 +45,7 @@ export const POST = withRole(['SUPERADMIN'])(async (req) => {
   const exists = await prisma.user.findUnique({ where: { email: managerEmail } })
   if (exists) return Response.json({ error: 'Email déjà utilisé' }, { status: 409 })
 
-  const password = Math.random().toString(36).slice(-8) + 'A1!'
+  const password = generateSecurePassword()
   const passwordHash = await bcrypt.hash(password, 10)
 
   const trialExpiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)

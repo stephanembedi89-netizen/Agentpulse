@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+  if (session.user.role !== 'AGENT') return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
 
   const agentId   = session.user.id
   const companyId = session.user.companyId

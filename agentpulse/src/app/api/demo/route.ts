@@ -1,20 +1,22 @@
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
+import { randomBytes } from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { sendWelcomeEmail } from '@/lib/email'
 
 const schema = z.object({
-  firstName: z.string().min(2),
-  lastName:  z.string().min(2),
-  company:   z.string().min(2),
-  role:      z.string().min(2),
-  email:     z.string().email(),
-  phone:     z.string().min(6),
+  firstName: z.string().min(2).max(100),
+  lastName:  z.string().min(2).max(100),
+  company:   z.string().min(2).max(200),
+  role:      z.string().min(2).max(100),
+  email:     z.string().email().max(254),
+  phone:     z.string().min(6).max(30),
 })
 
 function generatePassword(): string {
   const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
-  return Array.from({ length: 10 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+  const bytes = randomBytes(12)
+  return Array.from(bytes).map(b => chars[b % chars.length]).join('')
 }
 
 // ─── POST /api/demo ───────────────────────────────────────────────────────────

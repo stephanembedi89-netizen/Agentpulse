@@ -12,6 +12,12 @@ const jakarta = Plus_Jakarta_Sans({
   variable: '--font-jakarta',
 })
 
+const HEX_RE = /^#[0-9A-Fa-f]{6}$/
+
+function sanitizeHex(color: string, fallback: string): string {
+  return HEX_RE.test(color) ? color : fallback
+}
+
 function hexToRgb(hex: string): string {
   const clean = hex.replace('#', '')
   const r = parseInt(clean.slice(0, 2), 16)
@@ -38,9 +44,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     select: { logoUrl: true, primaryColor: true, secondaryColor: true },
   })
 
-  const primary   = company?.primaryColor   ?? '#3B82F6'
-  const secondary = company?.secondaryColor ?? '#10B981'
-  const logoUrl   = company?.logoUrl        ?? null
+  const primary   = sanitizeHex(company?.primaryColor   ?? '', '#3B82F6')
+  const secondary = sanitizeHex(company?.secondaryColor ?? '', '#10B981')
+  const logoUrl   = company?.logoUrl ?? null
 
   const cssVars = `
     :root {
