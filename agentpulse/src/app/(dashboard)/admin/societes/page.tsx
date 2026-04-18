@@ -13,7 +13,9 @@ export default async function SocietesPage() {
 
   const companies = await prisma.company.findMany({
     orderBy: { createdAt: 'desc' },
-    include: {
+    select: {
+      id: true, name: true, createdAt: true,
+      primaryColor: true, secondaryColor: true,
       _count: { select: { users: true, policies: true } },
       users: {
         where:  { role: 'MANAGER' },

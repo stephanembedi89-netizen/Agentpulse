@@ -6,7 +6,8 @@ import bcrypt from 'bcryptjs'
 export const GET = withRole(['SUPERADMIN'])(async () => {
   const companies = await prisma.company.findMany({
     orderBy: { createdAt: 'desc' },
-    include: {
+    select: {
+      id: true, name: true, createdAt: true,
       _count: { select: { users: true, policies: true } },
       users: {
         where: { role: 'MANAGER' },
