@@ -65,12 +65,13 @@ const NAV: Record<string, NavGroup[]> = {
   ],
   MANAGER: [
     { title: 'Performance', items: [
-      { label: 'Accueil',       href: '/manager',                icon: I.home   },
-      { label: 'Classement',   href: '/manager/classement',     icon: I.trophy },
-      { label: 'Superviseurs', href: '/manager/superviseurs',   icon: I.users  },
-      { label: 'KPI équipe',   href: '/manager/kpis',           icon: I.chart  },
-      { label: 'Commissions',  href: '/manager/commissions',    icon: I.coin   },
-      { label: 'Alertes',      href: '/manager/alertes',        icon: I.bell   },
+      { label: 'Accueil',        href: '/manager',                icon: I.home   },
+      { label: 'Polices',        href: '/manager/polices',        icon: I.doc    },
+      { label: 'Classement',    href: '/manager/classement',     icon: I.trophy },
+      { label: 'Superviseurs',  href: '/manager/superviseurs',   icon: I.users  },
+      { label: 'KPI équipe',    href: '/manager/kpis',           icon: I.chart  },
+      { label: 'Commissions',   href: '/manager/commissions',    icon: I.coin   },
+      { label: 'Alertes',       href: '/manager/alertes',        icon: I.bell   },
     ]},
     { title: 'Administration', items: [
       { label: 'Utilisateurs',  href: '/manager/utilisateurs',  icon: I.user     },
